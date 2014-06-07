@@ -72,7 +72,7 @@ public class Events implements Listener {
     {
         if (plugin.getConfig().get("disableChat").equals(true))
         {
-            if (plugin.online.contains(e.getPlayer()))
+            if (plugin.online.contains(e.getPlayer().getName()))
             {
                 return;
             }
@@ -90,7 +90,7 @@ public class Events implements Listener {
         {
             String uuid =  e.getPlayer().getUniqueId().toString();
 
-            if (plugin.online.contains(e.getPlayer()))
+            if (plugin.online.contains(e.getPlayer().getName()))
             {
                 return;
             }
@@ -118,7 +118,7 @@ public class Events implements Listener {
         {
             String uuid =  e.getPlayer().getUniqueId().toString();
 
-            if (plugin.online.contains(e.getPlayer()))
+            if (plugin.online.contains(e.getPlayer().getName()))
             {
                 return;
             }
@@ -140,7 +140,7 @@ public class Events implements Listener {
         {
             String uuid =  e.getPlayer().getUniqueId().toString();
 
-            if (plugin.online.contains(e.getPlayer()))
+            if (plugin.online.contains(e.getPlayer().getName()))
             {
                 return;
             }
