@@ -1,6 +1,7 @@
 package com.xtechgamer735.SecureServer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -34,7 +35,13 @@ public class Events implements Listener
         Player player = e.getPlayer();
         String uuid = player.getPlayer().getUniqueId().toString();
 
-        if (plugin.getConfig().contains(uuid))
+        if (plugin.getConfig().getConfigurationSection("room") == null)
+        {
+            e.getPlayer().sendMessage(plugin.prefix + ChatColor.RED + "The secure room has not been set!");
+            return;
+        }
+
+        if (plugin.playerDatabase.contains(uuid))
         {
             World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("room.world"));
             double x = plugin.getConfig().getDouble("room.x");

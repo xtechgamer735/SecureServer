@@ -1,6 +1,6 @@
 name: SecureServer
 main: com.xtechgamer735.SecureServer.Main
-version: 0.1
+version: 1.0
 author: xtechgamer735
 softdepend: [WorldEdit, WorldGuard]
 
@@ -10,3 +10,13 @@ commands:
     setroom:
     login:
     setout:
+    secureserver:
+        aliases: [secure, ss]
+    removepassword:
+
+
+permissions:
+    secureserver.admin:
+        default: Op
+    secureserver.user:
+        default: true
