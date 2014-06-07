@@ -1,4 +1,6 @@
 SecureServer
 ============
 
-Plugin by xtechgamer735
+Secure Server by xtechgamer735
+
+This plugin adds an extra layer of security to your server. 
