@@ -60,9 +60,14 @@ public class Main extends JavaPlugin
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
+        if (!(sender instanceof Player))
+        {
+            sender.sendMessage(ChatColor.DARK_RED + "You cannot use this command frorem console!!");
+            return true;
+        }
+
         Player p = (Player) sender;
         String uuid = p.getPlayer().getUniqueId().toString();
-
 
         if (cmd.getLabel().equalsIgnoreCase("setpassword"))
         {

@@ -1,4 +1,5 @@
 #SecureServer by xtechgamer735
 #Please Leave this file, it will sort its self out!
-dosomething: true
-dosomethingelse: false
+disableCommands: false
+disableChat: false
+disableBuild: false

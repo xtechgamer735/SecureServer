@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * Created by xtechgamer735 on 06/06/2014.
@@ -35,6 +36,11 @@ public class secureserverCommand implements CommandExecutor
 
         if (args.length == 0)
         {
+            if (!(sender instanceof Player))
+            {
+                sender.sendMessage(ChatColor.DARK_RED + "You cannot use this command from console!!");
+                return true;
+            }
             sender.sendMessage(ChatColor.DARK_GREEN + "--------=[" + ChatColor.BLUE + "Secure Server v" + plugin.getDescription().getVersion() + " by " + ChatColor.GRAY + "xtechgamer" + ChatColor.DARK_RED + "735" + ChatColor.DARK_GREEN + "]=--------");
             sender.sendMessage(ChatColor.RED + "/secureserver" + ChatColor.GOLD + " - " + ChatColor.WHITE + "Shows this help menu.");
             sender.sendMessage(ChatColor.RED + "/login <password>" + ChatColor.GOLD + " - " + ChatColor.WHITE + "Login with the password you have already set");
