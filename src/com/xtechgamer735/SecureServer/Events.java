@@ -49,7 +49,7 @@ public class Events implements Listener {
             final Location location = new Location(w, x, y, z, (float) yaw, (float) pitch);
 
             e.getPlayer().teleport(location);
-            e.getPlayer().sendMessage("Please login with /login!");
+            e.getPlayer().sendMessage(plugin.prefix + ChatColor.RED + "Please" + ChatColor.GOLD + " /login " + ChatColor.RED + "to continue!");
 
 
             return;
