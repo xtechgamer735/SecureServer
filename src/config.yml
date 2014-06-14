@@ -9,6 +9,7 @@ out: #Please set with /setout
 
 email:
     enabled: false
-    emailaddress: youremail@gmail.com
+    SMTPserver: smtp.gmail.com
+    emailaddress: your@email.com
     password: changeme
     servername: ServerName

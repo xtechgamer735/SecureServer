@@ -21,11 +21,11 @@ public class secureserverCommand implements CommandExecutor
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
-        if ( (args.length == 1) && (args[0].equalsIgnoreCase("reload")) )
+        if ((args.length == 1) && (args[0].equalsIgnoreCase("reload")))
         {
             if (!(sender.hasPermission("secureserver.admin") || sender.isOp()))
             {
-                sender.sendMessage(plugin.prefix +  ChatColor.DARK_RED + "Error!" + ChatColor.RED + "No permission.");
+                sender.sendMessage(plugin.prefix + ChatColor.DARK_RED + "Error!" + ChatColor.RED + "No permission.");
                 return true;
             }
             plugin.playerDatabase.reloadConfig();
@@ -67,7 +67,6 @@ public class secureserverCommand implements CommandExecutor
             return true;
         }
         sender.sendMessage(plugin.prefix + ChatColor.RED + "/secureserver");
-
 
 
         return true;

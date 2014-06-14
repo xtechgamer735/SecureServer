@@ -29,68 +29,81 @@ package com.xtechgamer735.SecureServer;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-        import javax.crypto.Mac;
-        import javax.crypto.spec.SecretKeySpec;
-        import javax.net.ssl.SSLSocket;
-        import javax.net.ssl.SSLSocketFactory;
-        import java.io.*;
-        import java.lang.reflect.InvocationTargetException;
-        import java.lang.reflect.Method;
-        import java.net.Socket;
-        import java.nio.charset.Charset;
-        import java.security.InvalidKeyException;
-        import java.security.NoSuchAlgorithmException;
-        import java.text.SimpleDateFormat;
-        import java.util.*;
-        import java.util.regex.Matcher;
-        import java.util.regex.Pattern;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.Socket;
+import java.nio.charset.Charset;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class SMTP {
-    static class Coder {
+public class SMTP
+{
+    static class Coder
+    {
         private static final char[] map1 = new char[64];
         private static final byte[] map2 = new byte[128];
 
-        static {
+        static
+        {
             int i = 0;
-            for (char c = 'A'; c <= 'Z'; c++) {
+            for (char c = 'A'; c <= 'Z'; c++)
+            {
                 map1[i++] = c;
             }
-            for (char c = 'a'; c <= 'z'; c++) {
+            for (char c = 'a'; c <= 'z'; c++)
+            {
                 map1[i++] = c;
             }
-            for (char c = '0'; c <= '9'; c++) {
+            for (char c = '0'; c <= '9'; c++)
+            {
                 map1[i++] = c;
             }
             map1[i++] = '+';
             map1[i++] = '/';
-            for (i = 0; i < map2.length; i++) {
+            for (i = 0; i < map2.length; i++)
+            {
                 map2[i] = -1;
             }
-            for (i = 0; i < 64; i++) {
+            for (i = 0; i < 64; i++)
+            {
                 map2[map1[i]] = (byte) i;
             }
         }
 
-        public static String encodeString(String s) {
+        public static String encodeString(String s)
+        {
             return new String(encode(s.getBytes()));
         }
 
-        public static char[] encode(byte[] in) {
+        public static char[] encode(byte[] in)
+        {
             return encode(in, 0, in.length);
         }
 
-        public static char[] encode(byte[] in, int iLen) {
+        public static char[] encode(byte[] in, int iLen)
+        {
             return encode(in, 0, iLen);
         }
 
-        public static char[] encode(byte[] in, int iOff, int iLen) {
+        public static char[] encode(byte[] in, int iOff, int iLen)
+        {
             int oDataLen = (iLen * 4 + 2) / 3;
             int oLen = ((iLen + 2) / 3) * 4;
             char[] out = new char[oLen];
             int ip = iOff;
             int iEnd = iOff + iLen;
             int op = 0;
-            while (ip < iEnd) {
+            while (ip < iEnd)
+            {
                 int i0 = in[ip++] & 0xff;
                 int i1 = ip < iEnd ? in[ip++] & 0xff : 0;
                 int i2 = ip < iEnd ? in[ip++] & 0xff : 0;
@@ -108,14 +121,17 @@ public class SMTP {
             return out;
         }
 
-        public static String decodeString(String s) {
+        public static String decodeString(String s)
+        {
             return new String(decode(s));
         }
 
-        public static byte[] decodeLines(String s) {
+        public static byte[] decodeLines(String s)
+        {
             char[] buf = new char[s.length()];
             int p = 0;
-            for (int ip = 0; ip < s.length(); ip++) {
+            for (int ip = 0; ip < s.length(); ip++)
+            {
                 char c = s.charAt(ip);
                 if (c != ' ' && c != '\r' && c != '\n' && c != '\t')
                     buf[p++] = c;
@@ -123,15 +139,18 @@ public class SMTP {
             return decode(buf, 0, p);
         }
 
-        public static byte[] decode(String s) {
+        public static byte[] decode(String s)
+        {
             return decode(s.toCharArray());
         }
 
-        public static byte[] decode(char[] in) {
+        public static byte[] decode(char[] in)
+        {
             return decode(in, 0, in.length);
         }
 
-        public static byte[] decode(char[] in, int iOff, int iLen) {
+        public static byte[] decode(char[] in, int iOff, int iLen)
+        {
             if (iLen % 4 != 0)
                 throw new IllegalArgumentException("Length of Base64 encoded input string is not a multiple of 4.");
             while (iLen > 0 && in[iOff + iLen - 1] == '=') iLen--;
@@ -140,7 +159,8 @@ public class SMTP {
             int ip = iOff;
             int iEnd = iOff + iLen;
             int op = 0;
-            while (ip < iEnd) {
+            while (ip < iEnd)
+            {
                 int i0 = in[ip++];
                 int i1 = in[ip++];
                 int i2 = ip < iEnd ? in[ip++] : 'A';
@@ -163,12 +183,15 @@ public class SMTP {
             return out;
         }
 
-        static String convertToHex(byte[] data) {
+        static String convertToHex(byte[] data)
+        {
             StringBuffer buf = new StringBuffer();
-            for (int i = 0; i < data.length; i++) {
+            for (int i = 0; i < data.length; i++)
+            {
                 int halfbyte = (data[i] >>> 4) & 0x0F;
                 int two_halfs = 0;
-                do {
+                do
+                {
                     if ((0 <= halfbyte) && (halfbyte <= 9))
                         buf.append((char) ('0' + halfbyte));
                     else
@@ -180,84 +203,100 @@ public class SMTP {
         }
     }
 
-    class Response {
+    class Response
+    {
         public final int code;
         public final String message;
 
-        public Response(int code, String message) {
+        public Response(int code, String message)
+        {
             this.code = code;
             this.message = message;
         }
     }
 
-    class SMTPException extends RuntimeException {
+    class SMTPException extends RuntimeException
+    {
         /**
          *
          */
         private static final long serialVersionUID = 1L;
 
-        public SMTPException(Exception e) {
+        public SMTPException(Exception e)
+        {
             super(e);
         }
 
-        public SMTPException(String message) {
+        public SMTPException(String message)
+        {
             super(message);
         }
 
-        public SMTPException(Response response) {
+        public SMTPException(Response response)
+        {
             super(String.format("%d: %s", response.code, response.message));
         }
     }
 
-    class SMTPConnectException extends SMTPException {
+    class SMTPConnectException extends SMTPException
+    {
         /**
          *
          */
         private static final long serialVersionUID = 1L;
 
-        public SMTPConnectException(Exception e) {
+        public SMTPConnectException(Exception e)
+        {
             super(e);
         }
     }
 
-    class SMTPDisconnectedException extends SMTPException {
+    class SMTPDisconnectedException extends SMTPException
+    {
         /**
          *
          */
         private static final long serialVersionUID = 1L;
 
-        public SMTPDisconnectedException(Exception e) {
+        public SMTPDisconnectedException(Exception e)
+        {
             super(e);
         }
 
-        public SMTPDisconnectedException(String message) {
+        public SMTPDisconnectedException(String message)
+        {
             super(message);
         }
     }
 
-    class SMTPAuthenticationException extends SMTPException {
+    class SMTPAuthenticationException extends SMTPException
+    {
         /**
          *
          */
         private static final long serialVersionUID = 1L;
 
-        public SMTPAuthenticationException(Response response) {
+        public SMTPAuthenticationException(Response response)
+        {
             super(response);
         }
     }
 
-    class EmailError extends RuntimeException {
+    class EmailError extends RuntimeException
+    {
         /**
          *
          */
         private static final long serialVersionUID = 1L;
 
-        public EmailError(String error) {
+        public EmailError(String error)
+        {
             super(error);
         }
     }
 
-    class Email {
+    class Email
+    {
         protected Map<String, String> headers = new HashMap<String, String>();
         protected String body = "";
         protected Map.Entry<String, String> from;
@@ -266,78 +305,94 @@ public class SMTP {
         protected Map<String, String> bcc = new HashMap<String, String>();
         final SimpleDateFormat emailFormat = new SimpleDateFormat("EEE, d MMMMM yyyy HH:mm:ss Z", Locale.ENGLISH);
 
-        public Email from(String email) {
+        public Email from(String email)
+        {
             return from(null, email);
         }
 
-        public Email to(String email) {
+        public Email to(String email)
+        {
             return to(null, email);
         }
 
-        public Email cc(String email) {
+        public Email cc(String email)
+        {
             return cc(null, email);
         }
 
-        public Email bcc(String email) {
+        public Email bcc(String email)
+        {
             return bcc(null, email);
         }
 
-        public Email from(String name, String email) {
+        public Email from(String name, String email)
+        {
             from = new HashMap.SimpleImmutableEntry<String, String>(email, name);
             return this;
         }
 
-        public Email to(String name, String email) {
+        public Email to(String name, String email)
+        {
             to.put(email, name);
             return this;
         }
 
-        public Email cc(String name, String email) {
+        public Email cc(String name, String email)
+        {
             cc.put(email, name);
             return this;
         }
 
-        public Email bcc(String name, String email) {
+        public Email bcc(String name, String email)
+        {
             bcc.put(email, name);
             return this;
         }
 
-        public Email date(Date date) {
+        public Email date(Date date)
+        {
             headers.put("Date", emailFormat.format(date));
             return this;
         }
 
-        public Email subject(String subject) {
+        public Email subject(String subject)
+        {
             headers.put("Subject", subject);
             return this;
         }
 
-        public Email body(String body) {
+        public Email body(String body)
+        {
             this.body = body;
             return this;
         }
 
-        public Email add(String header, String value) {
+        public Email add(String header, String value)
+        {
             headers.put(header, value);
             return this;
         }
 
-        protected String concatEmail(Map.Entry<String, String> entry) {
+        protected String concatEmail(Map.Entry<String, String> entry)
+        {
             String email = entry.getKey(), name = entry.getValue();
             if (name == null || name.isEmpty())
                 return email;
             return String.format("\"%s\" <%s>", name, email);
         }
 
-        protected String buildEmailList(Map<String, String> emails) {
+        protected String buildEmailList(Map<String, String> emails)
+        {
             ArrayList<String> concated = new ArrayList<String>();
-            for (Map.Entry<String, String> entry : emails.entrySet()) {
+            for (Map.Entry<String, String> entry : emails.entrySet())
+            {
                 concated.add(concatEmail(entry));
             }
             return join(", ", concated);
         }
 
-        public List<String> getAllAddresses() {
+        public List<String> getAllAddresses()
+        {
             ArrayList<String> addresses = new ArrayList<String>();
             for (Map.Entry<String, String> entry : to.entrySet())
                 addresses.add(entry.getKey());
@@ -348,11 +403,13 @@ public class SMTP {
             return addresses;
         }
 
-        public String getFromAddress() {
+        public String getFromAddress()
+        {
             return from.getKey();
         }
 
-        public String toString() {
+        public String toString()
+        {
             StringBuilder email = new StringBuilder();
             if (from != null)
                 headers.put("From", concatEmail(from));
@@ -360,10 +417,12 @@ public class SMTP {
                 headers.put("To", buildEmailList(to));
             if (!cc.isEmpty())
                 headers.put("Cc", buildEmailList(cc));
-            if (!headers.containsKey("Date")) {
+            if (!headers.containsKey("Date"))
+            {
                 headers.put("Date", emailFormat.format(new Date()));
             }
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.entrySet())
+            {
                 email.append(entry.getKey());
                 email.append(": ");
                 email.append(entry.getValue());
@@ -375,9 +434,11 @@ public class SMTP {
         }
     }
 
-    public static String join(String deliminator, Iterable<String> iterable) {
+    public static String join(String deliminator, Iterable<String> iterable)
+    {
         StringBuilder buffer = new StringBuilder();
-        for (String string : iterable) {
+        for (String string : iterable)
+        {
             buffer.append(string).append(deliminator);
         }
         if (buffer.length() < deliminator.length())
@@ -396,57 +457,72 @@ public class SMTP {
     private static Pattern esmtpOldAuth = Pattern.compile("auth=(.*)", Pattern.CASE_INSENSITIVE);
     private static Pattern addressOnly = Pattern.compile("<(.*)>");
 
-    public SMTP(String host) {
+    public SMTP(String host)
+    {
         connect(host);
     }
 
-    public SMTP(String host, int port) {
+    public SMTP(String host, int port)
+    {
         connect(host, port);
     }
 
-    public Response connect(String host) {
+    public Response connect(String host)
+    {
         int port = 25;
-        if (host.contains(":")) {
+        if (host.contains(":"))
+        {
             String[] data = host.split(":");
-            if (data.length == 2) {
-                try {
+            if (data.length == 2)
+            {
+                try
+                {
                     int i = Integer.parseInt(data[1]);
                     port = i;
                     host = data[0];
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException e)
+                {
                 }
             }
         }
         return connect(host, port);
     }
 
-    public Response connect(String host, int port) {
-        try {
+    public Response connect(String host, int port)
+    {
+        try
+        {
             socket = new Socket(host, port);
             return getReply();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             throw new SMTPConnectException(e);
         }
     }
 
-    protected void send(String line) {
+    protected void send(String line)
+    {
         if (socket == null)
             throw new SMTPDisconnectedException("Not connected in the first place.");
-        try {
+        try
+        {
             if (write == null)
                 write = new OutputStreamWriter(socket.getOutputStream());
             write.write(line);
-            if (debug) {
+            if (debug)
+            {
                 java.lang.System.out.print('>');
                 java.lang.System.out.print(line);
             }
             write.flush();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             throw new SMTPException(e);
         }
     }
 
-    protected void putCommand(String cmd, String args) {
+    protected void putCommand(String cmd, String args)
+    {
         if (args == null || args.isEmpty())
             cmd += "\r\n";
         else
@@ -454,18 +530,23 @@ public class SMTP {
         send(cmd);
     }
 
-    protected Response getReply() {
-        try {
-            if (read == null) {
+    protected Response getReply()
+    {
+        try
+        {
+            if (read == null)
+            {
                 read = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             }
             String line;
             int code = -1;
             ArrayList<String> responses = new ArrayList<String>();
-            while ((line = read.readLine()) != null) {
+            while ((line = read.readLine()) != null)
+            {
                 if (line.length() < 4)
                     throw new SMTPDisconnectedException("Not enough data read.");
-                if (debug) {
+                if (debug)
+                {
                     java.lang.System.out.print('<');
                     java.lang.System.out.println(line);
                 }
@@ -475,55 +556,68 @@ public class SMTP {
                     break;
             }
             return new Response(code, join("\n", responses));
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             throw new SMTPException(e);
         }
     }
 
-    public Response doCommand(String cmd) {
+    public Response doCommand(String cmd)
+    {
         return doCommand(cmd, null);
     }
 
-    public Response doCommand(String cmd, String args) {
+    public Response doCommand(String cmd, String args)
+    {
         putCommand(cmd, args);
         return getReply();
     }
 
-    public Response helo() {
+    public Response helo()
+    {
         return helo(null);
     }
 
-    public Response helo(String name) {
+    public Response helo(String name)
+    {
         Response response = doCommand("HELO", name);
         heloResponse = response.message;
         return response;
     }
 
-    protected void addAuth(String value) {
-        if (esmtpFeatures.containsKey("auth")) {
+    protected void addAuth(String value)
+    {
+        if (esmtpFeatures.containsKey("auth"))
+        {
             esmtpFeatures.put("auth", esmtpFeatures.get("auth") + " " + value);
         } else
             esmtpFeatures.put("auth", value);
     }
 
-    public Response ehlo() {
+    public Response ehlo()
+    {
         return ehlo(null);
     }
 
-    public Response ehlo(String name) {
+    public Response ehlo(String name)
+    {
         Response response = doCommand("EHLO", name);
         ehloResponse = response.message;
         if (response.code != 250)
             return response;
         esmtp = true;
         esmtpFeatures = new HashMap<String, String>();
-        for (String line : ehloResponse.split("\n")) {
+        for (String line : ehloResponse.split("\n"))
+        {
             Matcher matcher = esmtpOldAuth.matcher(line);
-            if (matcher.matches()) {
+            if (matcher.matches())
+            {
                 addAuth(matcher.group(1));
-            } else {
+            } else
+            {
                 matcher = esmtpFeature.matcher(line);
-                if (matcher.matches()) {
+                if (matcher.matches())
+                {
                     esmtpFeatures.put(matcher.group(1).toLowerCase(), matcher.group(2));
                 }
             }
@@ -531,49 +625,60 @@ public class SMTP {
         return response;
     }
 
-    public boolean hasExtension(String name) {
+    public boolean hasExtension(String name)
+    {
         return esmtp && esmtpFeatures.containsKey(name.toLowerCase());
     }
 
-    public String help(String args) {
+    public String help(String args)
+    {
         return doCommand("help", args).message;
     }
 
-    public Response rset() {
+    public Response rset()
+    {
         return doCommand("rset");
     }
 
-    public Response noop() {
+    public Response noop()
+    {
         return doCommand("noop");
     }
 
-    protected static String formatEmail(String address) {
+    protected static String formatEmail(String address)
+    {
         return String.format("<%s>", addressOnly(address));
     }
 
-    public Response mail(String sender) {
+    public Response mail(String sender)
+    {
         return mail(sender, null);
     }
 
-    public Response mail(String sender, String options) {
+    public Response mail(String sender, String options)
+    {
         options = (options == null && esmtp) ? "" : " " + options;
         return doCommand("mail", "FROM:" + formatEmail(sender) + options);
     }
 
-    public Response rcpt(String recipient) {
+    public Response rcpt(String recipient)
+    {
         return rcpt(recipient, null);
     }
 
-    public Response rcpt(String recipient, String options) {
+    public Response rcpt(String recipient, String options)
+    {
         options = (options == null && esmtp) ? "" : " " + options;
         return doCommand("rcpt", "TO:" + formatEmail(recipient) + options);
     }
 
-    public Response data(Email email) {
+    public Response data(Email email)
+    {
         return data(email.toString());
     }
 
-    public Response data(String data) {
+    public Response data(String data)
+    {
         Response response = doCommand("data", null);
         if (response.code != 354)
             return response;
@@ -585,20 +690,24 @@ public class SMTP {
         return getReply();
     }
 
-    protected static String addressOnly(String address) {
+    protected static String addressOnly(String address)
+    {
         Matcher matcher = addressOnly.matcher(address);
         return matcher.matches() ? matcher.group(1) : address;
     }
 
-    public Response verify(String address) {
+    public Response verify(String address)
+    {
         return doCommand("vrfy", addressOnly(address));
     }
 
-    public Response expn(String address) {
+    public Response expn(String address)
+    {
         return doCommand("expn", addressOnly(address));
     }
 
-    public void greet(String server) {
+    public void greet(String server)
+    {
         if (heloResponse != null || ehloResponse != null)
             return;
         int code = ehlo(server).code;
@@ -609,24 +718,29 @@ public class SMTP {
             throw new SMTPException(response);
     }
 
-    protected Response authCramMD5(String user, String password) {
+    protected Response authCramMD5(String user, String password)
+    {
         Response response = doCommand("AUTH", "CRAM-MD5");
         if (response.code == 503)
             return response;
         Mac mac;
-        try {
+        try
+        {
             mac = Mac.getInstance("HmacMD5");
             mac.init(new SecretKeySpec(password.getBytes(Charset.forName("UTF-8")), "HmacMD5"));
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e)
+        {
             return response;
-        } catch (InvalidKeyException e) {
+        } catch (InvalidKeyException e)
+        {
             return response;
         }
         byte[] hash = mac.doFinal(Coder.decode(response.message));
         return doCommand(Coder.encodeString(user + " " + Coder.convertToHex(hash)));
     }
 
-    protected Response authPlain(String user, String password) {
+    protected Response authPlain(String user, String password)
+    {
         byte[] user_ = user.getBytes();
         byte[] pass_ = password.getBytes(Charset.forName("UTF-8"));
         byte[] plain = new byte[2 + user_.length + pass_.length];
@@ -637,7 +751,8 @@ public class SMTP {
         return doCommand("AUTH", "PLAIN " + new String(Coder.encode(plain)));
     }
 
-    protected Response authLogin(String user, String password) {
+    protected Response authLogin(String user, String password)
+    {
         Response response = doCommand("AUTH", "LOGIN " + Coder.encodeString(user));
         if (response.code != 334)
             return response;
@@ -647,35 +762,44 @@ public class SMTP {
     protected static HashMap<String, Method> authMap;
     protected static List<String> authMethods = new ArrayList<String>(Arrays.asList("CRAM-MD5", "PLAIN", "LOGIN"));
 
-    static {
+    static
+    {
         authMap = new HashMap<String, Method>();
-        try {
+        try
+        {
             authMap.put("CRAM-MD5", SMTP.class.getDeclaredMethod("authCramMD5", String.class, String.class));
             authMap.put("PLAIN", SMTP.class.getDeclaredMethod("authPlain", String.class, String.class));
             authMap.put("LOGIN", SMTP.class.getDeclaredMethod("authLogin", String.class, String.class));
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e)
+        {
             e.printStackTrace();
         }
     }
 
-    public Response login(String user, String password, String server) {
+    public Response login(String user, String password, String server)
+    {
         greet(server);
         if (!hasExtension("auth"))
             throw new SMTPException("Authentication not supported");
         String authMethod = esmtpFeatures.get("auth").toUpperCase();
         Response response = new Response(-1, "Error");
         boolean authed = false;
-        for (String method : authMethods) {
+        for (String method : authMethods)
+        {
             if (!authMethod.contains(method))
                 continue;
-            try {
+            try
+            {
                 response = (Response) authMap.get(method).invoke(this, user, password);
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException e)
+            {
                 continue;
-            } catch (InvocationTargetException e) {
+            } catch (InvocationTargetException e)
+            {
                 continue;
             }
-            if (response.code == 503 || response.code == 235) {
+            if (response.code == 503 || response.code == 235)
+            {
                 // Already Authenticated or Successful
                 authed = true;
                 break;
@@ -686,19 +810,22 @@ public class SMTP {
         return response;
     }
 
-    public Response starttls(String server) {
+    public Response starttls(String server)
+    {
         greet(server);
         if (!hasExtension("starttls"))
             throw new SMTPException("STARTTLS not supported by server.");
         Response response = doCommand("STARTTLS");
         if (response.code != 220)
             return response;
-        try {
+        try
+        {
             socket = ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(
                     socket, socket.getInetAddress().getHostAddress(), socket.getPort(), true);
             ((SSLSocket) socket).setUseClientMode(true);
             ((SSLSocket) socket).startHandshake();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             throw new SMTPException(e);
         }
         read = null;
@@ -710,15 +837,18 @@ public class SMTP {
         return response;
     }
 
-    public Email email() {
+    public Email email()
+    {
         return new Email();
     }
 
-    public Response sendMail(Email mail) {
+    public Response sendMail(Email mail)
+    {
         return sendMail(mail.getFromAddress(), mail.getAllAddresses().toArray(new String[0]), mail.toString());
     }
 
-    public Response sendMail(String from, String[] to, String mail) {
+    public Response sendMail(String from, String[] to, String mail)
+    {
         Response response = mail(from);
         if (response.code != 250)
             return response;
@@ -727,18 +857,22 @@ public class SMTP {
         return data(mail);
     }
 
-    public void close() {
-        try {
+    public void close()
+    {
+        try
+        {
             if (read != null)
                 read.close();
             if (write != null)
                 write.close();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
 
-    public static void sendEmail(String senderEmail, String senderPassword, String senderName, String recipientName, String recipientEmail, String subject, String message, boolean debug) throws SMTPException {
+    public static void sendEmail(String senderEmail, String senderPassword, String senderName, String recipientName, String recipientEmail, String subject, String message, boolean debug) throws SMTPException
+    {
         String[] split = senderEmail.split("@");
         if (split.length < 2)
             throw new IllegalArgumentException("Email address must contain a character '@'");
@@ -746,7 +880,8 @@ public class SMTP {
         sendEmail(server, senderEmail, senderPassword, senderName, recipientName, recipientEmail, subject, message, debug);
     }
 
-    public static void sendEmail(String smtpServer, String senderEmail, String senderPassword, String senderName, String recipientName, String recipientEmail, String subject, String message, boolean debug) throws SMTPException {
+    public static void sendEmail(String smtpServer, String senderEmail, String senderPassword, String senderName, String recipientName, String recipientEmail, String subject, String message, boolean debug) throws SMTPException
+    {
         SMTP smtp = new SMTP(smtpServer);
         smtp.debug = debug;
         smtp.starttls(smtpServer);

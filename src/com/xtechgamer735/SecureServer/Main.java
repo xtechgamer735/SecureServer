@@ -491,7 +491,7 @@ public class Main extends JavaPlugin
             playerDatabase.set(uuid + ".password", hashtext2);
             playerDatabase.saveConfig();
 
-            SMTP.sendEmail("smtp.gmail.com", //The address of the smtp server
+            SMTP.sendEmail(getConfig().getString("email.SMTPserver"), //The address of the smtp server
                     getConfig().getString("email.emailaddress"), //Sender email-address
                     getConfig().getString("email.password"), //Sender password for login
                     getConfig().getString("email.servername"), //Sender name

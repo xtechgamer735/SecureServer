@@ -17,28 +17,33 @@ import java.util.Locale;
 /**
  * Created by xtechgamer735 on 05/06/2014.
  */
-public class Events implements Listener {
+public class Events implements Listener
+{
     Main plugin;
 
     //ArrayList<String> online;
 
-    public Events(Main passedPlugin) {
+    public Events(Main passedPlugin)
+    {
         this.plugin = passedPlugin;
 
     }
 
 
     @EventHandler
-    public void playerJoin(PlayerJoinEvent e) {
+    public void playerJoin(PlayerJoinEvent e)
+    {
         Player player = e.getPlayer();
         String uuid = player.getPlayer().getUniqueId().toString();
 
-        if (plugin.getConfig().getConfigurationSection("room") == null) {
+        if (plugin.getConfig().getConfigurationSection("room") == null)
+        {
             e.getPlayer().sendMessage(plugin.prefix + ChatColor.RED + "The secure room has not been set!");
             return;
         }
 
-        if (plugin.playerDatabase.contains(uuid)) {
+        if (plugin.playerDatabase.contains(uuid))
+        {
             World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("room.world"));
             double x = plugin.getConfig().getDouble("room.x");
             double y = plugin.getConfig().getDouble("room.y");
@@ -59,8 +64,10 @@ public class Events implements Listener {
 
 
     @EventHandler
-    public void playerLeave(PlayerQuitEvent e) {
-        if (plugin.online.contains(e.getPlayer().getName())) {
+    public void playerLeave(PlayerQuitEvent e)
+    {
+        if (plugin.online.contains(e.getPlayer().getName()))
+        {
             plugin.online.remove(e.getPlayer().getName());
             return;
         }
@@ -88,7 +95,7 @@ public class Events implements Listener {
     {
         if (plugin.getConfig().get("disableCommands").equals(true))
         {
-            String uuid =  e.getPlayer().getUniqueId().toString();
+            String uuid = e.getPlayer().getUniqueId().toString();
 
             if (plugin.online.contains(e.getPlayer().getName()))
             {
@@ -116,7 +123,7 @@ public class Events implements Listener {
     {
         if (plugin.getConfig().get("disableBuild").equals(true))
         {
-            String uuid =  e.getPlayer().getUniqueId().toString();
+            String uuid = e.getPlayer().getUniqueId().toString();
 
             if (plugin.online.contains(e.getPlayer().getName()))
             {
@@ -138,7 +145,7 @@ public class Events implements Listener {
     {
         if (plugin.getConfig().get("disableBuild").equals(true))
         {
-            String uuid =  e.getPlayer().getUniqueId().toString();
+            String uuid = e.getPlayer().getUniqueId().toString();
 
             if (plugin.online.contains(e.getPlayer().getName()))
             {
