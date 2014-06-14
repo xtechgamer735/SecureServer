@@ -2,7 +2,6 @@ name: SecureServer
 main: com.xtechgamer735.SecureServer.Main
 version: 1.0
 author: xtechgamer735
-softdepend: [WorldEdit, WorldGuard]
 
 commands:
     setpassword:
@@ -13,6 +12,8 @@ commands:
     secureserver:
         aliases: [secure, ss]
     removepassword:
+    setemail:
+    forgotpassword:
 
 
 permissions:

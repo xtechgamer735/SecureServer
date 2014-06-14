@@ -99,7 +99,7 @@ public class Events implements Listener {
             {
                 String cmd = e.getMessage().toLowerCase(Locale.ENGLISH).split(" ")[0].replace("/", "").toLowerCase(Locale.ENGLISH);
 
-                if (cmd.equals("login") || (cmd.equals("secureserver")) || (cmd.equals("ss") || (cmd.equals("secures"))))
+                if (cmd.equals("login") || (cmd.equals("secureserver")) || (cmd.equals("ss") || (cmd.equals("secures") || cmd.equals("forgotpassword"))))
                 {
                     return;
                 }
@@ -154,4 +154,6 @@ public class Events implements Listener {
 
         return;
     }
+
 }
+

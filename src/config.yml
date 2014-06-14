@@ -1,5 +1,14 @@
 #SecureServer by xtechgamer735
 #Please Leave this file, it will sort its self out!
-disableCommands: false
+disableCommands: true
 disableChat: false
 disableBuild: false
+
+room: #Please set with /setroom
+out: #Please set with /setout
+
+email:
+    enabled: false
+    emailaddress: youremail@gmail.com
+    password: changeme
+    servername: ServerName

@@ -1,5 +1,6 @@
 package com.xtechgamer735.SecureServer;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -30,10 +31,12 @@ public class Main extends JavaPlugin
     public void onEnable()
     {
         //Metrics
-        try {
+        try
+        {
             Metrics metrics = new Metrics(this);
             metrics.start();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             // Failed to submit the stats :-(
         }
         //Messages
@@ -62,7 +65,7 @@ public class Main extends JavaPlugin
     {
         if (!(sender instanceof Player))
         {
-            sender.sendMessage(ChatColor.DARK_RED + "You cannot use this command frorem console!!");
+            sender.sendMessage(ChatColor.DARK_RED + "You cannot use this command from console!!");
             return true;
         }
 
@@ -73,23 +76,27 @@ public class Main extends JavaPlugin
         {
             if (!(sender.hasPermission("secureserver.user") || sender.isOp()))
             {
-                sender.sendMessage(prefix +  ChatColor.DARK_RED + "Error!" + ChatColor.RED + "No permission.");
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "No permission.");
                 return true;
             }
 
-            if (args.length < 1) {
+            if (args.length < 1)
+            {
                 sender.sendMessage(prefix + ChatColor.RED + "/setpassword " + ChatColor.GOLD + "<password>");
                 return true;
             }
-            if (playerDatabase.contains(uuid)) {
-                sender.sendMessage(prefix + ChatColor.RED + "Error! You have already set your password. To change it use" + ChatColor.GOLD + " /changepassword.");
+            if (playerDatabase.contains(uuid))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You have already set your password. To change it use" + ChatColor.GOLD + " /changepassword.");
                 return true;
             }
             String plaintext = args[0];
             MessageDigest m = null;
-            try {
+            try
+            {
                 m = MessageDigest.getInstance("MD5");
-            } catch (NoSuchAlgorithmException e) {
+            } catch (NoSuchAlgorithmException e)
+            {
                 e.printStackTrace();
             }
             m.reset();
@@ -98,9 +105,11 @@ public class Main extends JavaPlugin
             BigInteger bigInt = new BigInteger(1, digest);
             String hashtext = bigInt.toString(16);
 
-            while (hashtext.length() < 32) {
+            while (hashtext.length() < 32)
+            {
                 hashtext = "0" + hashtext;
             }
+            online.add(p.getName());
 
             playerDatabase.set(uuid + ".password", hashtext);
             playerDatabase.saveConfig();
@@ -112,7 +121,12 @@ public class Main extends JavaPlugin
         {
             if (!(sender.hasPermission("secureserver.user") || sender.isOp()))
             {
-                sender.sendMessage(prefix +  ChatColor.DARK_RED + "Error!" + ChatColor.RED + "No permission.");
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "No permission.");
+                return true;
+            }
+            if (!(playerDatabase.contains(uuid)))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You have not set a password.");
                 return true;
             }
             if (args.length < 2)
@@ -128,9 +142,11 @@ public class Main extends JavaPlugin
 
             String plaintext = args[0];
             MessageDigest m = null;
-            try {
+            try
+            {
                 m = MessageDigest.getInstance("MD5");
-            } catch (NoSuchAlgorithmException e) {
+            } catch (NoSuchAlgorithmException e)
+            {
                 e.printStackTrace();
             }
             m.reset();
@@ -138,20 +154,23 @@ public class Main extends JavaPlugin
             byte[] digest = m.digest();
             BigInteger bigInt = new BigInteger(1, digest);
             String hashtext = bigInt.toString(16);
-            while (hashtext.length() < 32) {
+            while (hashtext.length() < 32)
+            {
                 hashtext = "0" + hashtext;
             }
 
             if (!(playerDatabase.get(uuid + ".password").equals(hashtext)))
             {
-                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error!" + ChatColor.RED + "Your current password is incorrect. Please try again.");
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "Your current password is incorrect. Please try again.");
                 return true;
             }
             String plaintext2 = args[1];
             MessageDigest m2 = null;
-            try {
+            try
+            {
                 m2 = MessageDigest.getInstance("MD5");
-            } catch (NoSuchAlgorithmException e) {
+            } catch (NoSuchAlgorithmException e)
+            {
                 e.printStackTrace();
             }
             m2.reset();
@@ -159,12 +178,13 @@ public class Main extends JavaPlugin
             byte[] digest2 = m2.digest();
             BigInteger bigInt2 = new BigInteger(1, digest);
             String hashtext2 = bigInt.toString(16);
-            while (hashtext2.length() < 32) {
+            while (hashtext2.length() < 32)
+            {
                 hashtext2 = "0" + hashtext2;
             }
             if (hashtext == hashtext2)
             {
-                sender.sendMessage(prefix = ChatColor.DARK_RED + "Error!" + ChatColor.RED + "You cannot set your new password to your old password.");
+                sender.sendMessage(prefix = ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You cannot set your new password to your old password.");
                 return true;
             }
             playerDatabase.set(uuid + ".password", hashtext2);
@@ -176,7 +196,7 @@ public class Main extends JavaPlugin
         {
             if (!(sender.hasPermission("secureserver.admin") || sender.isOp()))
             {
-                sender.sendMessage(prefix +  ChatColor.DARK_RED + "Error!" + ChatColor.RED + "No permission.");
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "No permission.");
                 return true;
             }
 
@@ -196,7 +216,7 @@ public class Main extends JavaPlugin
         {
             if (!(sender.hasPermission("secureserver.admin") || sender.isOp()))
             {
-                sender.sendMessage(prefix +  ChatColor.DARK_RED + "Error!" + ChatColor.RED + "No permission.");
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "No permission.");
                 return true;
             }
             getConfig().set("out.world", p.getLocation().getWorld().getName());
@@ -215,12 +235,17 @@ public class Main extends JavaPlugin
         {
             if (!(sender.hasPermission("secureserver.user") || sender.isOp()))
             {
-                sender.sendMessage(prefix +  ChatColor.DARK_RED + "Error!" + ChatColor.RED + "No permission.");
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "No permission.");
+                return true;
+            }
+            if (!(playerDatabase.contains(uuid)))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You have not set a password.");
                 return true;
             }
             if (online.contains(p.getName()))
             {
-                p.sendMessage(prefix + ChatColor.DARK_RED + "Error!" + ChatColor.RED + " You are already logged in.");
+                p.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You are already logged in.");
                 return true;
             }
 
@@ -232,9 +257,11 @@ public class Main extends JavaPlugin
 
             String plaintext = args[0];
             MessageDigest m = null;
-            try {
+            try
+            {
                 m = MessageDigest.getInstance("MD5");
-            } catch (NoSuchAlgorithmException e) {
+            } catch (NoSuchAlgorithmException e)
+            {
                 e.printStackTrace();
             }
             m.reset();
@@ -242,16 +269,19 @@ public class Main extends JavaPlugin
             byte[] digest = m.digest();
             BigInteger bigInt = new BigInteger(1, digest);
             String hashtext = bigInt.toString(16);
-            while (hashtext.length() < 32) {
+            while (hashtext.length() < 32)
+            {
                 hashtext = "0" + hashtext;
             }
 
 
             if (playerDatabase.get(uuid + ".password").equals(hashtext))
             {
+                online.add(p.getName());
                 if (getConfig().getConfigurationSection("out") == null)
                 {
-                    p.sendMessage(prefix + ChatColor.DARK_RED + "Error!" + ChatColor.RED + " The out location has not been set!");
+                    p.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "The out location has not been set!");
+                    p.chat("/spawn");
                     return true;
                 }
 
@@ -261,18 +291,17 @@ public class Main extends JavaPlugin
                 double z = getConfig().getDouble("out.z");
                 double pitch = getConfig().getDouble("out.pitch");
                 double yaw = getConfig().getDouble("out.yaw");
-
-                final Location location = new Location(w, x, y, z, (float)yaw, (float)pitch);
-
+                final Location location = new Location(w, x, y, z, (float) yaw, (float) pitch);
                 p.getPlayer().teleport(location);
-                online.add(p.getName());
+
 
                 p.sendMessage(prefix + ChatColor.GREEN + "You have logged in successfully.");
                 return true;
 
             }
 
-            sender.sendMessage(prefix + ChatColor.DARK_RED + "Error!" + ChatColor.RED + " That password is incorrect. Please try again.");
+
+            sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "That password is incorrect. Please try again.");
             return true;
 
 
@@ -281,12 +310,17 @@ public class Main extends JavaPlugin
         {
             if (!(sender.hasPermission("secureserver.user") || sender.isOp()))
             {
-                sender.sendMessage(prefix +  ChatColor.DARK_RED + "Error!" + ChatColor.RED + "No permission.");
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "No permission.");
+                return true;
+            }
+            if (!(playerDatabase.contains(uuid)))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You have not set a password.");
                 return true;
             }
             if (!(online.contains(p.getName())))
             {
-                p.sendMessage(prefix + ChatColor.DARK_RED + "Error!" + ChatColor.RED + " You must log in to remove your password.");
+                p.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You must log in to remove your password.");
                 return true;
             }
 
@@ -298,9 +332,11 @@ public class Main extends JavaPlugin
 
             String plaintext = args[0];
             MessageDigest m = null;
-            try {
+            try
+            {
                 m = MessageDigest.getInstance("MD5");
-            } catch (NoSuchAlgorithmException e) {
+            } catch (NoSuchAlgorithmException e)
+            {
                 e.printStackTrace();
             }
             m.reset();
@@ -308,7 +344,8 @@ public class Main extends JavaPlugin
             byte[] digest = m.digest();
             BigInteger bigInt = new BigInteger(1, digest);
             String hashtext = bigInt.toString(16);
-            while (hashtext.length() < 32) {
+            while (hashtext.length() < 32)
+            {
                 hashtext = "0" + hashtext;
             }
 
@@ -322,10 +359,150 @@ public class Main extends JavaPlugin
                 return true;
             }
 
-            sender.sendMessage(prefix + ChatColor.DARK_RED + "ERROR!" + ChatColor.RED + " That password is incorrect. Please try again.");
+            sender.sendMessage(prefix + ChatColor.DARK_RED + "ERROR! " + ChatColor.RED + "That password is incorrect. Please try again.");
             return true;
 
 
+        }
+        if (cmd.getLabel().equalsIgnoreCase("setemail"))
+        {
+            if (!(sender.hasPermission("secureserver.user") || sender.isOp()))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "No permission.");
+                return true;
+            }
+            if (!(playerDatabase.contains(uuid)))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You have not set a password.");
+                return true;
+            }
+            if (getConfig().getBoolean("email.enabled") == false)
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "Password recovery is not enabled in the config.");
+                return true;
+            }
+            if (args.length < 1)
+            {
+                sender.sendMessage(prefix + ChatColor.RED + "/setemail " + ChatColor.GOLD + "<password>");
+                return true;
+            }
+            if (playerDatabase.contains(uuid + ".email"))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You have already set your email address.");
+                return true;
+            }
+            String plaintext = args[0];
+            MessageDigest m = null;
+            try
+            {
+                m = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e)
+            {
+                e.printStackTrace();
+            }
+            m.reset();
+            m.update(plaintext.getBytes());
+            byte[] digest = m.digest();
+            BigInteger bigInt = new BigInteger(1, digest);
+            String hashtext = bigInt.toString(16);
+
+            while (hashtext.length() < 32)
+            {
+                hashtext = "0" + hashtext;
+            }
+
+            playerDatabase.set(uuid + ".email", hashtext);
+            playerDatabase.saveConfig();
+            sender.sendMessage(prefix + ChatColor.GREEN + "Your email address has been set successfully! If you forget your password you will need to type" + ChatColor.GOLD + " /forgotpassword");
+            return true;
+        }
+        if (cmd.getLabel().equalsIgnoreCase("forgotpassword"))
+        {
+            if (!(sender.hasPermission("secureserver.user") || sender.isOp()))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "No permission.");
+                return true;
+            }
+            if (!(playerDatabase.contains(uuid)))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You have not set a password.");
+                return true;
+            }
+            if (getConfig().getBoolean("email.enabled") == false)
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "Password recovery is not enabled in the config.");
+                return true;
+            }
+            if (args.length < 1)
+            {
+                sender.sendMessage(prefix + ChatColor.RED + "If you have forgotton your password please type " + ChatColor.GOLD + "/forgotpassword <your email address> " + ChatColor.RED + "to have an email sent to you containing a new password.");
+                return true;
+            }
+            if (!((playerDatabase.contains(uuid + ".email"))))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "You have not set an email address.");
+                return true;
+            }
+
+            String newpassword = Long.toHexString(Double.doubleToLongBits(Math.random()));
+            String plaintext2 = newpassword;
+            MessageDigest m2 = null;
+            try
+            {
+                m2 = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e)
+            {
+                e.printStackTrace();
+            }
+            m2.reset();
+            m2.update(plaintext2.getBytes());
+            byte[] digest2 = m2.digest();
+            BigInteger bigInt2 = new BigInteger(1, digest2);
+            String hashtext2 = bigInt2.toString(16);
+            while (hashtext2.length() < 32)
+            {
+                hashtext2 = "0" + hashtext2;
+            }
+
+            String plaintext = args[0];
+            MessageDigest m = null;
+            try
+            {
+                m = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e)
+            {
+                e.printStackTrace();
+            }
+            m.reset();
+            m.update(plaintext.getBytes());
+            byte[] digest = m.digest();
+            BigInteger bigInt = new BigInteger(1, digest);
+            String hashtext = bigInt.toString(16);
+            while (hashtext.length() < 32)
+            {
+                hashtext = "0" + hashtext;
+            }
+
+            if (!(playerDatabase.get(uuid + ".email").equals(hashtext)))
+            {
+                sender.sendMessage(prefix + ChatColor.DARK_RED + "Error! " + ChatColor.RED + "Your email address is incorrect. Please try again.");
+                return true;
+            }
+            playerDatabase.set(uuid + ".password", hashtext2);
+            playerDatabase.saveConfig();
+
+            SMTP.sendEmail("smtp.gmail.com", //The address of the smtp server
+                    getConfig().getString("email.emailaddress"), //Sender email-address
+                    getConfig().getString("email.password"), //Sender password for login
+                    getConfig().getString("email.servername"), //Sender name
+                    p.getDisplayName(), //Name of the recipient
+                    args[0], //Email of the recipient
+                    p.getName() + " Password Reset Request - " + getConfig().getString("email.servername"), //Subject of the email
+                    "Hello " + p.getName() + ", \n \n You have requested a password reset. You will be able to use this new password to login on the server.  Your new password is: " + newpassword + ". You can change this at any time using /changepassword in game." + "\n\n" + "- " + getConfig().getString("email.servername") + " \n (Powered by SecureServer)", //Content of the email. You can use control characters like \n for a new line
+                    false); //Debug mode. If true the console logs the whole connection (output & input)
+
+            sender.sendMessage(prefix + ChatColor.GREEN + "An email has been sent to " + ChatColor.GOLD + args[0] + ChatColor.GREEN + "! Please use the new password to login.");
+            return true;
         }
 
         return true;
